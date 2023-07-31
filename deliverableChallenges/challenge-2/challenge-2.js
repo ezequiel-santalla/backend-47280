@@ -2,7 +2,7 @@ import { promises as fs } from 'fs'
 
 class ProductManager {
   constructor() {
-    this.path = './products.txt'
+    this.path = './deliverableChallenges/challenge-2/products.txt'
   }
 
   // Add Product function
