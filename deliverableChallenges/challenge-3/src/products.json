@@ -1,0 +1,101 @@
+[
+  {
+    "title": "Pilot Helmet",
+    "description": "Replica of a Formula 1 pilot's helmet",
+    "price": 199.99,
+    "thumbnail": "thumbnail_url_1.jpg",
+    "code": "HELMF1",
+    "stock": 10,
+    "id": 1
+  },
+
+  {
+    "title": "Adjustable Wrench",
+    "description": "Adjustable wrench for race car maintenance",
+    "price": 29.99,
+    "thumbnail": "thumbnail_url_2.jpg",
+    "code": "WRENCHF1",
+    "stock": 25,
+    "id": 2
+  },
+
+  {
+    "title": "Formula 1 Car Poster",
+    "description": "High-quality poster of a Formula 1 car in action",
+    "price": 15.99,
+    "thumbnail": "thumbnail_url_3.jpg",
+    "code": "POSTERF1",
+    "stock": 50,
+    "id": 3
+  },
+
+  {
+    "title": "Racing Gloves",
+    "description": "Professional racing gloves for enhanced grip",
+    "price": 49.99,
+    "thumbnail": "thumbnail_url_4.jpg",
+    "code": "GLOVESF1",
+    "stock": 15,
+    "id": 4
+  },
+
+  {
+    "title": "F1 Team Cap",
+    "description": "Official cap of a Formula 1 racing team",
+    "price": 24.99,
+    "thumbnail": "thumbnail_url_5.jpg",
+    "code": "CAPF1",
+    "stock": 30,
+    "id": 5
+  },
+
+  {
+    "title": "Carbon Fiber Keychain",
+    "description": "Keychain made from genuine carbon fiber",
+    "price": 9.99,
+    "thumbnail": "thumbnail_url_6.jpg",
+    "code": "KEYCHAINF1",
+    "stock": 100,
+    "id": 6
+  },
+
+  {
+    "title": "Pit Stop Stopwatch",
+    "description": "Precision stopwatch for timing pit stops",
+    "price": 34.99,
+    "thumbnail": "thumbnail_url_7.jpg",
+    "code": "STOPWATCHF1",
+    "stock": 20,
+    "id": 7
+  },
+
+  {
+    "title": "Race Day Sunglasses",
+    "description": "Sleek sunglasses designed for race day",
+    "price": 59.99,
+    "thumbnail": "thumbnail_url_8.jpg",
+    "code": "SUNGLASSESF1",
+    "stock": 12,
+    "id": 8
+  },
+
+  {
+    "title": "F1 Track Map",
+    "description": "Detailed map of a famous Formula 1 track",
+    "price": 18.99,
+    "thumbnail": "thumbnail_url_9.jpg",
+    "code": "TRACKMAPF1",
+    "stock": 40,
+    "id": 9
+  },
+
+  {
+    "title": "Pit Crew T-Shirt",
+    "description": "T-shirt inspired by Formula 1 pit crew uniforms",
+    "price": 27.99,
+    "thumbnail": "thumbnail_url_10.jpg",
+    "code": "TSHIRTF1",
+    "stock": 18,
+    "id": 10
+  }
+]
