@@ -55,6 +55,12 @@ io.on("connection", (socket) => {
 
     socket.emit('productAddedMessage', "Product added succesfully")
   })
+
+  socket.on('deleteProduct', async (productId) => {
+    await productManager.deleteProduct(productId)
+
+    socket.emit('productDeletedMessage', "Product deleted successfully")
+  })
 })
 
 // Routes
