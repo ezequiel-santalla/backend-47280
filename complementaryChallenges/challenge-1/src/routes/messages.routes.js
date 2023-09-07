@@ -3,7 +3,7 @@ import MessageModel from '../models/messages.models.js'
 
 const messageRouter = Router()
 
-// Route to get all the carts
+// Route to get all the messages
 messageRouter.get('/', async (req, res) => {
   const { limit } = req.query
 

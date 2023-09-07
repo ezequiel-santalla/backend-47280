@@ -4,6 +4,7 @@ import multer from 'multer'
 import { engine } from 'express-handlebars'
 import { Server } from 'socket.io'
 import { __dirname } from './path.js'
+import { ProductManager } from './controllers/productManager.js'
 import path from 'path'
 import productRouter from './routes/products.routes.js'
 import cartRouter from './routes/carts.routes.js'
@@ -12,6 +13,7 @@ import messageRouter from './routes/messages.routes.js'
 
 const app = express()
 const PORT = 8080
+const productManager = new ProductManager('src/models/products.json')
 
 // Server
 mongoose.connect('mongodb+srv://ezequielsantalla99:tenis1999@f1-db.xvrpfy5.mongodb.net/?retryWrites=true&w=majority')
@@ -79,6 +81,7 @@ io.on("connection", (socket) => {
 // Routes
 app.use('/static', express.static(path.join(__dirname, '/public')))
 app.use('/static/realtimeproducts', express.static(path.join(__dirname, '/public')))
+app.use('/static/realtimecarts', express.static(path.join(__dirname, '/public')))
 app.use('/static/chat', express.static(path.join(__dirname, '/public')))
 app.use('/api/products', productRouter)
 app.use('/api/carts', cartRouter)
@@ -97,6 +100,13 @@ app.get('/static/realtimeproducts', (req, res) => {
   res.render("realTimeProducts", {
     pathCSS: "realTimeProducts",
     pathJS: "realTimeProducts"
+  })
+})
+
+app.get('/static/realtimecarts', (req, res) => {
+  res.render("realTimeCarts", {
+    pathCSS: "realTimeCarts",
+    pathJS: "realTimeCarts"
   })
 })
 

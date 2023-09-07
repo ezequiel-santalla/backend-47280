@@ -10,7 +10,7 @@ cartRouter.get('/', async (req, res) => {
   try {
     const foundCarts = await CartModel.find().limit(limit)
 
-    res.status(200).send({ resultado: 'OK', message: foundCarts })
+    res.status(200).send({ result: 'OK', message: foundCarts })
   }
 
   catch (error) {
@@ -36,20 +36,35 @@ cartRouter.get('/:cid', async (req, res) => {
   }
 })
 
-// Route to add a new cart
-cartRouter.post('/', async (req, res)=> {
-  const { id_prod, quantity } = req.body
+// Route to create a new cart
+cartRouter.post('/:cid/product/:pid', async (req, res) => {
+  const { pid } = req.params
 
   try {
-    const addedCart = await CartModel.create({
-      id_prod, quantity
-    })
+    const addedCart = await CartModel.create(pid)
 
-    res.status(200).send({ result: 'OK', message: addedCart })
+    res.status(200).send({ result: "OK", message: addedCart })
   }
 
   catch (error) {
-    res.status(400).send ({ error:`Error creating the cart: ${error}` })
+    res.status(400).send({ error: `Error creating the cart: ${error}` })
+  }
+})
+
+// Route to add a product into a cart
+cartRouter.post('/', async (req, res) => {
+  const { id_cart, id_prod, quantity } = req.body
+
+  try {
+    const addedProductToCart = await CartModel.create({
+      id_cart, id_prod, quantity
+    })
+
+    res.status(200).send({ result: 'OK', message: addedProductToCart })
+  }
+
+  catch (error) {
+    res.status(400).send ({ error:`Error adding the product into the cart: ${error}` })
   }
 })
 

@@ -1,12 +1,6 @@
 import { Schema, model } from 'mongoose'
 
 const productSchema = new Schema({
-  code: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-
   title: {
     type: String,
     required: true
@@ -37,6 +31,12 @@ const productSchema = new Schema({
     required: true
   },
 
+  code: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+
   status: {
     type: Boolean,
     default: true
@@ -45,6 +45,6 @@ const productSchema = new Schema({
   thumbnails: [String]
 })
 
-const ProductModel = model('carts', productSchema)
+const ProductModel = model('products', productSchema)
 
 export default ProductModel
