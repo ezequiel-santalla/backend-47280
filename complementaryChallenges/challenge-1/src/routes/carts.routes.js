@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import CartModel from '../models/carts.models.js'
+import CartModel from '../models/carts.model.js'
 
 const cartRouter = Router()
 
@@ -10,7 +10,7 @@ cartRouter.get('/', async (req, res) => {
   try {
     const foundCarts = await CartModel.find().limit(limit)
 
-    res.status(200).send({ result: 'OK', message: foundCarts })
+    res.status(200).send({ result: "OK", message: foundCarts })
   }
 
   catch (error) {
@@ -18,7 +18,7 @@ cartRouter.get('/', async (req, res) => {
   }
 })
 
-// Route to get a specif cart by ID
+// Route to get a cart by its ID
 cartRouter.get('/:cid', async (req, res) => {
   const { cid } = req.params
 
@@ -28,22 +28,24 @@ cartRouter.get('/:cid', async (req, res) => {
     if (foundCart)
       res.status(200).send({ result: 'OK', message: foundCart })
     else
-      res.status(404).send({ result:'Cart Not Found', message: foundCart })
-  }
+      res.status(404).send({ result: 'Cart Not Found', message: foundCart })
+    }
 
-  catch (error){
-    res.status(400).send ({ error:`Error consulting the cart: ${error}` })
+  catch (error) {
+    res.status(400).send({ error: `Error consulting the cart: ${error}` })
   }
 })
 
 // Route to create a new cart
-cartRouter.post('/:cid/product/:pid', async (req, res) => {
-  const { pid } = req.params
+cartRouter.post('/', async (req, res) => {
+  const { id_prod, quantity } = req.body
 
   try {
-    const addedCart = await CartModel.create(pid)
+    const addedCart = await CartModel.create({
+      id_prod, quantity
+    })
 
-    res.status(200).send({ result: "OK", message: addedCart })
+    res.status(200).send({ result: 'OK', message: addedCart })
   }
 
   catch (error) {
@@ -51,20 +53,26 @@ cartRouter.post('/:cid/product/:pid', async (req, res) => {
   }
 })
 
-// Route to add a product into a cart
-cartRouter.post('/', async (req, res) => {
-  const { id_cart, id_prod, quantity } = req.body
+// Route to add a product to a cart
+cartRouter.post('/:cid/product/:pid', async (req, res) => {
+  const { cid } = req.params
+  const { pid } = req.params
+  const { quantity } = req.body
 
   try {
-    const addedProductToCart = await CartModel.create({
-      id_cart, id_prod, quantity
+    const updatedCart = await CartModel.findByIdAndUpdate(cid, {
+      $push: { products: { id_prod: pid, quantity } } }, {
+      new: true
     })
 
-    res.status(200).send({ result: 'OK', message: addedProductToCart })
-  }
+    if (updatedCart)
+      res.status(200).json(updatedCart.products)
+    else
+      res.status(404).send({ error: 'Cart not found' })
+    }
 
   catch (error) {
-    res.status(400).send ({ error:`Error adding the product into the cart: ${error}` })
+    res.status(400).send({ error: `Error adding product to the cart: ${error}` })
   }
 })
 

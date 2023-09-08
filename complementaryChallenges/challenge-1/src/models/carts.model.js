@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose'
 
 const cartSchema = new Schema({
   products: [{
-    id_prop: {
+    id_prod: {
       type: Schema.Types.ObjectId,
       ref: 'products',
       required: true

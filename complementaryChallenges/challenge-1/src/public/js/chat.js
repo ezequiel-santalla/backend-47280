@@ -25,6 +25,7 @@ chatButton.addEventListener('click', () => {
 
   if (inputValue.value.trim().length > 0) {
     socket.emit('message', { date: currentDate, user: user, message: inputValue.value })
+
     inputValue.value = ""
   }
 })

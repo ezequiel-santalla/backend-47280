@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import MessageModel from '../models/messages.models.js'
+import MessageModel from '../models/messages.model.js'
 
 const messageRouter = Router()
 
@@ -20,11 +20,11 @@ messageRouter.get('/', async (req, res) => {
 
 // Route to add a new message
 messageRouter.post('/', async (req, res)=>{
-  const { email, message } = req.body
+  const { message } = req.body
 
   try {
     const addedMessage = await MessageModel.create({
-      email, message
+      message
     })
 
     res.status(200).send({ result: 'OK', message: addedMessage})

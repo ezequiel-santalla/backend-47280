@@ -1,42 +1,27 @@
 import express from 'express'
 import mongoose from 'mongoose'
-import multer from 'multer'
 import { engine } from 'express-handlebars'
 import { Server } from 'socket.io'
 import { __dirname } from './path.js'
-import { ProductManager } from './controllers/productManager.js'
 import path from 'path'
+
+import ProductModel from './models/products.model.js'
+import MessageModel from './models/messages.model.js'
+
 import productRouter from './routes/products.routes.js'
 import cartRouter from './routes/carts.routes.js'
-import userRouter from './routes/users.routes.js'
 import messageRouter from './routes/messages.routes.js'
 
 const app = express()
 const PORT = 8080
-const productManager = new ProductManager('src/models/products.json')
 
 // Server
-mongoose.connect('mongodb+srv://ezequielsantalla99:tenis1999@f1-db.xvrpfy5.mongodb.net/?retryWrites=true&w=majority')
-  .then(() => console.log("DB connected"))
-  .catch((error) => console.log("Error connecting to MongDB Atlas: ", error))
-
 const server = app.listen(PORT, () => {
   console.log(`Server on PORT: ${PORT}
 http://localhost:${PORT}`)
 })
 
 const io = new Server(server)
-
-// Config
-const imageStorageConfig = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'src/public/img')
-  },
-
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}${file.originalname}`)
-  }
-})
 
 // Middlewares
 app.use(express.json())
@@ -45,37 +30,44 @@ app.engine('handlebars', engine())
 app.set('view engine', 'handlebars')
 app.set('views', path.resolve(__dirname, './views'))
 
-const imageUpload = multer({ storage: imageStorageConfig })
-const messages = []
+// MongoDB Atlas connection
+mongoose.connect('mongodb+srv://ezequielsantalla99:tenis1999@f1-db.xvrpfy5.mongodb.net/?retryWrites=true&w=majority')
+    .then (()=> console.log('BDD connected'))
+    .catch((error)=> console.log("Error connecting with MongoDB ATLAS: ", error));
 
-// Socket.io conection
+// Socket.io connection
 io.on("connection", (socket) => {
   console.log("Connection with Socket.io")
 
   socket.on('load', async () => {
-		const products = await productManager.getProducts()
+		const products = await ProductModel.find()
 
 		socket.emit('products', products)
 	})
 
   socket.on('newProduct', async (productData) => {
-    await productManager.addProduct(productData)
+    await ProductModel.create(productData)
 
     socket.emit('productAddedMessage', "Product added succesfully")
   })
 
   socket.on('deleteProduct', async (productId) => {
-    await productManager.deleteProduct(productId)
+    await ProductModel.findByIdAndDelete(productId)
 
     socket.emit('productDeletedMessage', "Product deleted successfully")
   })
 
-  socket.on('message', info => {
-    console.log(info)
-    messages.push(info)
+  socket.on('message', async info => {
+		const { email, message } = info
 
-    socket.emit('messages', messages)
-  })
+		await MessageModel.create({
+			message
+		})
+
+    const messages = await MessageModel.find()
+
+		socket.emit('messages', messages)
+	})
 })
 
 // Routes
@@ -85,7 +77,6 @@ app.use('/static/realtimecarts', express.static(path.join(__dirname, '/public'))
 app.use('/static/chat', express.static(path.join(__dirname, '/public')))
 app.use('/api/products', productRouter)
 app.use('/api/carts', cartRouter)
-app.use('/api/users', userRouter)
 app.use('/api/messages', messageRouter)
 
 // Handlebars
@@ -115,8 +106,4 @@ app.get('/static/chat', (req, res) => {
     pathCSS: "chat",
     pathJS: "chat"
   })
-})
-
-app.post('/upload', imageUpload.single('product'), (req, res) => {
-  res.status(200).send("Upload Image")
 })

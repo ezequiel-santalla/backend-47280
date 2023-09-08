@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import ProductModel from '../models/products.models.js'
+import ProductModel from '../models/products.model.js'
 
 const productRouter = Router()
 
@@ -18,7 +18,7 @@ productRouter.get('/', async (req, res) => {
   }
 })
 
-// Route to get a specif product by ID
+// Route to get a product by its ID
 productRouter.get('/:pid', async (req, res) => {
   const { pid } = req.params
 
@@ -26,10 +26,10 @@ productRouter.get('/:pid', async (req, res) => {
     const foundProduct = await ProductModel.findById(pid)
 
     if (foundProduct)
-      res.status(200).send({ result: "OK", message: foundProduct })
+      res.status(200).send({ result: 'OK', message: foundProduct })
     else
-      res.status(404).send({ result: "Product Not Found", message: foundProduct })
-  }
+      res.status(404).send({ result: 'Product Not Found', message: foundProduct })
+    }
 
   catch (error) {
     res.status(400).send({ error: `Error consulting the product: ${error}` })
@@ -38,14 +38,14 @@ productRouter.get('/:pid', async (req, res) => {
 
 // Route to add a new product
 productRouter.post('/', async (req, res) => {
-  const { code, title, description, category, team, price, stock } = req.body
+  const { title, description, stock, code, price, category } = req.body
 
   try {
     const addedProduct = await ProductModel.create({
-      code, title, description, category, team, price, stock
+      title, description, stock, code, price, category
     })
 
-    res.status(200).send({ result: "OK", message: addedProduct })
+    res.status(200).send({result: 'OK', message: addedProduct })
   }
 
   catch (error) {
@@ -56,18 +56,18 @@ productRouter.post('/', async (req, res) => {
 // Route to update a product
 productRouter.put('/:pid', async (req, res) => {
   const { pid } = req.params
-  const { code, title, description, category, team, price, stock, status } = req.body
+  const { title, description, stock, code, price, category, status } = req.body
 
   try {
     const updatedProduct = await ProductModel.findByIdAndUpdate(pid, {
-      code, title, description, category, team, price, stock, status
+      title, description, stock, code, price, category, status
     })
 
-    if (updatedProduct)
-      res.status(200).send({ result: "OK", message: updatedProduct })
+    if (updatedProduct !== null && updatedProduct !== undefined)
+      res.status(200).send({ result: 'OK', message: updatedProduct })
     else
-      res.status(404).send({ result: "Product Not Found", message: updatedProduct })
-  }
+      res.status(404).send({ result: 'Product Not Found', message: 'Product Not Found' })
+    }
 
   catch (error) {
     res.status(400).send({ error: `Error updating the product: ${error}` })
@@ -76,18 +76,18 @@ productRouter.put('/:pid', async (req, res) => {
 
 // Route to delete a product
 productRouter.delete('/:pid', async (req, res) => {
-  const { pid } = req.params
+  const { pid } = req.params;
 
   try {
     const deletedProduct = await ProductModel.findByIdAndDelete(pid)
 
     if (deletedProduct)
-      res.status(200).send({ result: "OK", message: deletedProduct })
+      res.status(200).send({ result: 'ok', message: deletedProduct })
     else
-      res.status(404).send({ result: "Product Not Found", message: deletedProduct })
-  }
+      res.status(404).send({ result: 'Product Not Found', message: deletedProduct })
+    }
 
-  catch (error) {
+  catch (error){
     res.status(400).send({ error: `Error deleting the product: ${error}` })
   }
 })
