@@ -38,11 +38,9 @@ cartRouter.get('/:cid', async (req, res) => {
 
 // Route to create a new cart
 cartRouter.post('/', async (req, res) => {
-  const { id_prod, quantity } = req.body
-
   try {
     const addedCart = await CartModel.create({
-      id_prod, quantity
+      products: []
     })
 
     res.status(200).send({ result: 'OK', message: addedCart })
@@ -55,24 +53,31 @@ cartRouter.post('/', async (req, res) => {
 
 // Route to add a product to a cart
 cartRouter.post('/:cid/product/:pid', async (req, res) => {
-  const { cid } = req.params
-  const { pid } = req.params
+  const { cid, pid } = req.params
   const { quantity } = req.body
 
   try {
-    const updatedCart = await CartModel.findByIdAndUpdate(cid, {
-      $push: { products: { id_prod: pid, quantity } } }, {
-      new: true
-    })
+    const cart = await CartModel.findById(cid)
 
-    if (updatedCart)
-      res.status(200).json(updatedCart.products)
-    else
-      res.status(404).send({ error: 'Cart not found' })
+    if (!cart) {
+      return res.status(404).send({ error: 'Cart not found' })
     }
 
+    const existingProduct = cart.products.find(product => product.id_prod === pid)
+
+    if (existingProduct) {
+      existingProduct.quantity += quantity
+    } else {
+      cart.products.push({ id_prod: pid, quantity: quantity })
+    }
+
+    const updatedCart = await cart.save()
+
+    res.status(200).send({ response: "OK", message: updatedCart })
+  }
+
   catch (error) {
-    res.status(400).send({ error: `Error adding product to the cart: ${error}` })
+    res.status(400).send({ error: `Error adding product to the cart: ${error.message}` })
   }
 })
 
