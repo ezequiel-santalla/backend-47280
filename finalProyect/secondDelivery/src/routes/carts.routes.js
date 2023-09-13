@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import CartModel from '../models/carts.model.js'
+import mongoose from 'mongoose'
 
 const cartRouter = Router()
 
@@ -60,7 +61,12 @@ cartRouter.post('/:cid/products/:pid', async (req, res) => {
     const foundCart = await CartModel.findById(cid)
 
     if (foundCart) {
-      foundCart.products.push({ id_prod: pid, quantity: quantity })
+      const existingProductIndex = foundCart.products.findIndex((product) => product.id_prod == pid)
+
+      if (existingProductIndex !== -1) 
+        foundCart.products[existingProductIndex].quantity = quantity
+      else
+        foundCart.products.push({ id_prod: pid, quantity: quantity })
 
       const updatedCart = await foundCart.save()
 
@@ -68,10 +74,10 @@ cartRouter.post('/:cid/products/:pid', async (req, res) => {
     } else {
       res.status(404).send({ error: 'Cart not found' })
     }
-  }
-
+  } 
+  
   catch (error) {
-    res.status(400).send({ error: `Error adding a product to cart: ${error}` })
+    res.status(400).send({ error: `Error adding/updating a product in the cart: ${error}` })
   }
 })
 
@@ -84,13 +90,21 @@ cartRouter.put('/:cid', async (req, res) => {
     const foundCart = await CartModel.findById(cid)
 
     if (foundCart) {
-      foundCart.products = products
+      products.forEach(product => {
+        const productIndex = foundCart.products.findIndex(product => product.id_prod.equals(mongoose.Types.ObjectId(product.id_prod)))
+
+        if (productIndex !== -1) {
+          foundCart.products[productIndex].quantity = product.quantity
+        } else {
+          foundCart.products.push({ id_prod: product.id_prod, quantity: product.quantity })
+        }
+      })
 
       const updatedCart = await foundCart.save()
 
       res.status(200).send({ result: 'OK', message: 'Cart updated', cart: updatedCart })
     } else {
-      res.status(404).send({ error: 'Cart Nout Found' })
+      res.status(404).send({ error: 'Cart Not Found' })
     }
   }
 
@@ -137,7 +151,7 @@ cartRouter.delete('/:cid/products/:pid', async (req, res) => {
     const foundCart = await CartModel.findById(cid)
 
     if (foundCart) {
-      const productIndex = foundCart.products.findIndex(product => product.id_prod === pid)
+      const productIndex = foundCart.products.findIndex(product => product.id_prod.toString() === pid)
 
       if (productIndex !== -1) {
         foundCart.products.splice(productIndex, 1)
