@@ -60,12 +60,13 @@ cartRouter.post('/:cid/products/:pid', async (req, res) => {
     const foundCart = await CartModel.findById(cid)
 
     if (foundCart) {
-      const existingProductIndex = foundCart.products.findIndex((product) => product.id_prod == pid)
+      const existingProduct = foundCart.products.find(product => product.id_prod.equals(pid))
 
-      if (existingProductIndex !== -1) 
-        foundCart.products[existingProductIndex].quantity = quantity
-      else
+      if (existingProduct) {
+        existingProduct.quantity += quantity
+      } else {
         foundCart.products.push({ id_prod: pid, quantity: quantity })
+      }
 
       const updatedCart = await foundCart.save()
 
@@ -73,12 +74,11 @@ cartRouter.post('/:cid/products/:pid', async (req, res) => {
     } else {
       res.status(404).send({ error: 'Cart not found' })
     }
-  } 
-  
-  catch (error) {
+  } catch (error) {
     res.status(400).send({ error: `Error adding/updating a product in the cart: ${error}` })
   }
 })
+
 
 // Route to update a cart
 cartRouter.put('/:cid', async (req, res) => {
