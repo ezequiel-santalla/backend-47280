@@ -5,7 +5,7 @@ const productRouter = Router()
 
 // Route to get all the products
 productRouter.get('/', async (req, res) => {
-  const { limit = 10, page = 1, sort, query } = req.query
+  const { limit = 10, page = 1, sort, category, stock } = req.query
 
   const options = {
     page: parseInt(page, 10),
@@ -13,22 +13,18 @@ productRouter.get('/', async (req, res) => {
     sort: sort === 'desc' ? { price: -1 } : sort === 'asc' ? { price: 1 } : {},
   }
 
-  if (query) {
-    options.customLabels = {
-      totalDocs: 'totalItems',
-      docs: 'items',
-      limit: 'itemsPerPage',
-      page: 'currentPage',
-      nextPage: 'next',
-      prevPage: 'prev',
-      totalPages: 'pageCount',
-      pagingCounter: 'slNo',
-      meta: 'paginator',
-    }
+  const queryOptions = {}
+
+  if (category) {
+    queryOptions.category = category
+  }
+
+  if (stock) {
+    queryOptions.stock = stock
   }
 
   try {
-    const paginatedProducts = await ProductModel.paginate(query ? { category: query } : {}, options)
+    const paginatedProducts = await ProductModel.paginate(queryOptions, options)
 
     const response = {
       status: 'success',
@@ -43,13 +39,14 @@ productRouter.get('/', async (req, res) => {
       nextLink: paginatedProducts.hasNextPage ? `/api/products?page=${paginatedProducts.nextPage}` : null,
     }
 
-    res.status(200).send(response)
+    res.status(200).send(response);
   } 
   
   catch (error) {
     res.status(400).send({ error: 'error', message: `Error getting the products: ${error}` })
   }
 })
+
 
 // Route to get a product by its ID
 productRouter.get('/:pid', async (req, res) => {
