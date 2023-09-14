@@ -1,6 +1,5 @@
 import { Router } from 'express'
 import CartModel from '../models/carts.model.js'
-import mongoose from 'mongoose'
 
 const cartRouter = Router()
 
@@ -83,7 +82,7 @@ cartRouter.post('/:cid/products/:pid', async (req, res) => {
 
 // Route to update a cart
 cartRouter.put('/:cid', async (req, res) => {
-  const { cid } = req.params
+  const { cid, pid } = req.params
   const { products } = req.body
 
   try {
@@ -91,7 +90,7 @@ cartRouter.put('/:cid', async (req, res) => {
 
     if (foundCart) {
       products.forEach(product => {
-        const productIndex = foundCart.products.findIndex(product => product.id_prod.equals(mongoose.Types.ObjectId(product.id_prod)))
+        const productIndex = foundCart.products.findIndex(product => product.id_prod._id.equals(pid))
 
         if (productIndex !== -1) {
           foundCart.products[productIndex].quantity = product.quantity
@@ -122,7 +121,7 @@ cartRouter.put('/:cid/products/:pid', async (req, res) => {
     const foundCart = await CartModel.findById(cid)
 
     if (foundCart) {
-      const productIndex = foundCart.products.findIndex(product => product.id_prod.toString() === pid)
+      const productIndex = foundCart.products.findIndex(product => product.id_prod._id.equals(pid))
 
       if (productIndex !== -1) {
         foundCart.products[productIndex].quantity = quantity
@@ -151,7 +150,7 @@ cartRouter.delete('/:cid/products/:pid', async (req, res) => {
     const foundCart = await CartModel.findById(cid)
 
     if (foundCart) {
-      const productIndex = foundCart.products.findIndex(product => product.id_prod.toString() === pid)
+      const productIndex = foundCart.products.findIndex(product => product.id_prod._id.equals(pid))
 
       if (productIndex !== -1) {
         foundCart.products.splice(productIndex, 1)
