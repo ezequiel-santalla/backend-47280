@@ -79,25 +79,19 @@ cartRouter.post('/:cid/products/:pid', async (req, res) => {
   }
 })
 
-
 // Route to update a cart
 cartRouter.put('/:cid', async (req, res) => {
-  const { cid, pid } = req.params
+  const { cid } = req.params
   const { products } = req.body
 
   try {
     const foundCart = await CartModel.findById(cid)
 
     if (foundCart) {
-      products.forEach(product => {
-        const productIndex = foundCart.products.findIndex(product => product.id_prod._id.equals(pid))
-
-        if (productIndex !== -1) {
-          foundCart.products[productIndex].quantity = product.quantity
-        } else {
-          foundCart.products.push({ id_prod: product.id_prod, quantity: product.quantity })
-        }
-      })
+      foundCart.products = products.map(product => ({
+        id_prod: product.id_prod,
+        quantity: product.quantity
+      }))
 
       const updatedCart = await foundCart.save()
 
