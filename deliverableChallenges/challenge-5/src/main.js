@@ -42,9 +42,9 @@ io.on("connection", (socket) => {
   console.log("Connection with Socket.io")
 
   socket.on('load', async () => {
-    const products = await ProductModel.paginate({}, { limit: 5 })
+    const productsContainer = await ProductModel.paginate({}, { limit: 5 })
 
-    socket.emit('products', products)
+    socket.emit('products', productsContainer)
   })
 
   socket.on('newProduct', async (productData) => {

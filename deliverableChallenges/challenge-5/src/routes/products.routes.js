@@ -40,13 +40,12 @@ productRouter.get('/', async (req, res) => {
     }
 
     res.status(200).send(response);
-  } 
-  
+  }
+
   catch (error) {
     res.status(400).send({ error: 'error', message: `Error getting the products: ${error}` })
   }
 })
-
 
 // Route to get a product by its ID
 productRouter.get('/:pid', async (req, res) => {
