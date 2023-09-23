@@ -12,14 +12,13 @@ import path from 'path'
 
 import ProductModel from './models/products.model.js'
 import MessageModel from './models/messages.model.js'
+import UserModel from './models/users.model.js'
 
 import productRouter from './routes/products.routes.js'
 import cartRouter from './routes/carts.routes.js'
 import userRouter from './routes/users.routes.js'
 import sessionRouter from './routes/sessions.routes.js'
 import messageRouter from './routes/messages.routes.js'
-
-import auth from './auth.js'
 
 const app = express()
 const PORT = 8080
@@ -42,7 +41,7 @@ io.on("connection", (socket) => {
   console.log("Connection with Socket.io")
 
   socket.on('load', async () => {
-    const productsContainer = await ProductModel.paginate({}, { limit: 5 })
+    await ProductModel.paginate({}, { limit: 5 })
 
     socket.emit('products', productsContainer)
   })
@@ -57,6 +56,14 @@ io.on("connection", (socket) => {
     await ProductModel.findByIdAndDelete(productId)
 
     socket.emit('productDeletedMessage', "Product deleted successfully")
+  })
+
+  socket.on('newUser', async (userData) => {
+    await UserModel.create(userData)
+  })
+
+  socket.on('loginUser', async (userData) => {
+    await UserModel.create(userData)
   })
 
   socket.on('message', async info => {
@@ -97,6 +104,8 @@ app.use('/static', express.static(path.join(__dirname, '/public')))
 app.use('/static/realtimeproducts', express.static(path.join(__dirname, '/public')))
 app.use('/static/realtimecarts', express.static(path.join(__dirname, '/public')))
 app.use('/static/chat', express.static(path.join(__dirname, '/public')))
+app.use('/static/users', express.static(path.join(__dirname, '/public')))
+app.use('/static/login', express.static(path.join(__dirname, '/public')))
 
 // API Routes
 app.use('/api/products', productRouter)
@@ -127,32 +136,24 @@ app.get('/static/realtimecarts', (req, res) => {
   })
 })
 
+app.get('/static/users', (req, res) => {
+  res.render("users", {
+    pathCSS: "users",
+    pathJS: "users"
+  })
+})
+
+app.get('/static/login', (req, res) => {
+  res.render("login", {
+    pathCSS: "login",
+    pathJS: "login"
+  })
+})
+
 app.get('/static/chat', (req, res) => {
   res.render("chat", {
     pathCSS: "chat",
     pathJS: "chat"
   })
-})
-
-// Sessions Views
-app.get('/session', (req, res) => {
-  res.send("Welcome to the webpage!")
-})
-
-app.get('/login', (req, res) => {
-  const { email, password } = req.body
-
-  req.session.email = email
-  req.session.password = password
-
-  res.send("User Logged In")
-})
-
-app.get('/admin', auth, (req, res) => {
-  res.send("You are Admin!")
-})
-
-app.get('/logout', (req, res) => {
-  res.send("User Logged Out")
 })
 
