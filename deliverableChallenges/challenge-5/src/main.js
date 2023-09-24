@@ -112,15 +112,8 @@ app.use('/api/products', productRouter)
 app.use('/api/carts', cartRouter)
 app.use('/api/messages', messageRouter)
 app.use('/api/users', userRouter)
-app.use('/api/sessions', sessionRouter)
+app.use('/', sessionRouter)
 
-// Handlebars Views
-app.get('/static', (req, res) => {
-  res.render("home", {
-    pathCSS: "home",
-    pathJS: "home"
-  })
-})
 
 app.get('/static/realtimeproducts', (req, res) => {
   res.render("realTimeProducts", {
