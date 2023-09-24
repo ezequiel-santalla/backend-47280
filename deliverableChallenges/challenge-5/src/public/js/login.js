@@ -1,14 +1,14 @@
-const socket = io()
+// const socket = io()
 
-const loginUserForm = document.getElementById('loginUser')
+// const loginUserForm = document.getElementById('loginUser')
 
-addUserForm.addEventListener('submit', (event) => {
-  event.preventDefault()
+// loginUserForm.addEventListener('submit', (event) => {
+//   event.preventDefault()
 
-  const formData = new FormData(event.target)
-  const userData = Object.fromEntries(formData)
+//   const formData = new FormData(event.target)
+//   const userData = Object.fromEntries(formData)
 
-  socket.emit('loginUser', userData)
+//   socket.emit('loginUser', userData)
 
-  window.location.href = '/static/users'
-})
+//   window.location.href = '/static/users'
+// })
