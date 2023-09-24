@@ -1,1 +1,15 @@
-<nav>Hello, I am the NavBar</nav>
+<nav style="display: flex; justify-content: space-between; margin: 0 20px">
+    <ul style="display: flex; gap: 20px;">
+        <li><a href="/">Home</a></li>
+        <li><a href="/products">Products</a></li>
+    </ul>
+    <ul style="display: flex; gap: 20px;">
+        {{#if user}}
+            <li><a href="/logout">Logout</a></li>
+        {{else}}
+            <li><a href="/login">Login</a></li>
+            <li><a href="/register">Register</a></li>
+        {{/if}}
+
+    </ul>
+</nav>
