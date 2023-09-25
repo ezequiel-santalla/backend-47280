@@ -4,32 +4,28 @@ import productsController from '../controllers/products.controller.js'
 
 const sessionRouter = Router()
 
-
-
 sessionRouter.get('/login', async (req, res) => {
   if (req.session.login) {
-      res.redirect('/')
+    res.redirect('/')
   } else {
-      res.render('login')
+    res.render('login')
   }
 })
-
 
 sessionRouter.get('/register', async (req, res) => {
   if (req.session.user) {
-      res.redirect('/')
+    res.redirect('/')
   } else {
-      res.render('users')
+    res.render('users')
   }
 })
-
 
 sessionRouter.post('/register', async (req, res) => {
   const { email, password, first_name, last_name, age } = req.body
 
   const existingUser = await UserModel.findOne({ email })
   if (existingUser) {
-      return res.render('register', { error: 'El correo electrónico ya está registrado' })
+    return res.render('register', { error: 'El correo electrónico ya está registrado' })
   }
 
   const user = new UserModel({ email, password, first_name, last_name, age })
@@ -46,6 +42,7 @@ sessionRouter.post('/login', async (req, res) => {
   try {
     if (req.session.login) {
       res.status(200).send({ result: 'Login already exists' })
+      return
     }
 
     const loggedInUser = await UserModel.findOne({ email: email })
@@ -94,18 +91,19 @@ sessionRouter.get('/', async (req, res) => {
   })
 })
 
-// Handlebars Views
 sessionRouter.get('/products', async (req, res) => {
-  const payload = await productsController.getProducts()
-  
+  const page = req.query.page || 1
+
+  const payload = await productsController.getProducts({ page })
+
   res.render("products", {
     pathCSS: "products",
     pathJS: "products",
     payload: payload.docs,
-    user: req.session.user
+    user: req.session.user,
+    currentPage: page,
+    totalPages: payload.pages
   })
 })
-
-
 
 export default sessionRouter

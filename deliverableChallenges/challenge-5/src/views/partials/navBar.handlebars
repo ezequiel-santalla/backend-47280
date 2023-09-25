@@ -1,15 +1,28 @@
-<nav style="display: flex; justify-content: space-between; margin: 0 20px">
-    <ul style="display: flex; gap: 20px;">
-        <li><a href="/">Home</a></li>
-        <li><a href="/products">Products</a></li>
-    </ul>
-    <ul style="display: flex; gap: 20px;">
-        {{#if user}}
-            <li><a href="/logout">Logout</a></li>
-        {{else}}
-            <li><a href="/login">Login</a></li>
-            <li><a href="/register">Register</a></li>
-        {{/if}}
+<!DOCTYPE html>
+<html lang="en">
 
-    </ul>
-</nav>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+
+<body>
+	<nav style="display: flex; justify-content: space-between; margin: 0 20px">
+		<ul style="display: flex; gap: 20px;">
+			<li><a href="/">Home</a></li>
+			<li><a href="/products">Products</a></li>
+		</ul>
+		<ul style="display: flex; gap: 20px;">
+			{{#if user}}
+			<li><a href="/logout">Logout</a></li>
+			{{else}}
+			<li><a href="/login">Login</a></li>
+			<li><a href="/register">Register</a></li>
+			{{/if}}
+
+		</ul>
+	</nav>
+</body>
+
+</html>

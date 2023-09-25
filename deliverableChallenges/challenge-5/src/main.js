@@ -105,7 +105,6 @@ app.use('/static/realtimeproducts', express.static(path.join(__dirname, '/public
 app.use('/static/realtimecarts', express.static(path.join(__dirname, '/public')))
 app.use('/static/chat', express.static(path.join(__dirname, '/public')))
 app.use('/static/users', express.static(path.join(__dirname, '/public')))
-app.use('/static/login', express.static(path.join(__dirname, '/public')))
 
 // API Routes
 app.use('/api/products', productRouter)
@@ -133,13 +132,6 @@ app.get('/static/users', (req, res) => {
   res.render("users", {
     pathCSS: "users",
     pathJS: "users"
-  })
-})
-
-app.get('/static/login', (req, res) => {
-  res.render("login", {
-    pathCSS: "login",
-    pathJS: "login"
   })
 })
 
