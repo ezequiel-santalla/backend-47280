@@ -8,7 +8,7 @@ import UserModel from '../models/users.model.js'
 const LocalStrategy = local.Strategy
 const JWTStrategy = jwt.Strategy
 
-const ExtractJWT = jwt.ExtractJwt // Helpers
+const ExtractJWT = jwt.ExtractJwt
 
 const initializePassport = () => {
   const cookieExtractor = req => {

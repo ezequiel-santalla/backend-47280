@@ -72,28 +72,4 @@ sessionRouter.get('/logout', (req, res) => {
   }
 })
 
-// Handlebars Views
-sessionRouter.get('/', async (req, res) => {
-  res.render("home", {
-    pathCSS: "home",
-    pathJS: "home",
-    user: req.session.user
-  })
-})
-
-sessionRouter.get('/products', async (req, res) => {
-  const page = req.query.page || 1
-
-  const payload = await productsController.getProducts({ page })
-
-  res.render("products", {
-    pathCSS: "products",
-    pathJS: "products",
-    payload: payload.docs,
-    user: req.session.user,
-    currentPage: page,
-    totalPages: payload.pages
-  })
-})
-
 export default sessionRouter

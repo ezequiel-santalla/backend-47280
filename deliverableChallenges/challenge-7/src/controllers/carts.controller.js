@@ -1,4 +1,4 @@
-import CartModel from '../models/products.model.js'
+import CartModel from '../models/carts.model.js'
 
 export const getCarts = async (req, res) => {
   const { limit } = req.query
