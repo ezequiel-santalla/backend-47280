@@ -11,6 +11,7 @@ import { __dirname } from './path.js'
 import router from './routes/index.routes.js'
 
 import initializePassport from './config/passport.js'
+import config from './config/config.js'
 
 const app = express()
 const PORT = 8080
@@ -22,21 +23,21 @@ http://localhost:${PORT}`)
 })
 
 // MongoDB Atlas connection
-mongoose.connect(process.env.MONGO_URL)
+mongoose.connect(config.mongoUrl)
   .then(async () => { console.log('Database connected') })
   .catch((error) => console.log("Error connecting with MongoDB ATLAS: ", error))
 
 // Middlewares App
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(cookieParser(process.env.JWT_SECRET))
+app.use(cookieParser(config.jwtSecret))
 app.use(session({
   store: MongoStore.create({
-    mongoUrl: process.env.MONGO_URL,
+    mongoUrl: config.mongoUrl,
     mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
     ttl: 5
   }),
-  secret: process.env.SESSION_SECRET,
+  secret: config.sessionSecret,
   resave: true,
   saveUninitialized: true
 }))
