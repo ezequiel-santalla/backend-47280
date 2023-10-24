@@ -1,39 +1,10 @@
 import { Router } from 'express'
 import productsController from '../controllers/products.controller.js'
 import passport from 'passport'
+import { passportError, authorization } from '../utils/messageErrors.js'
+import { generateToken } from '../utils/jwt.js'
 
 const sessionRouter = Router()
-
-sessionRouter.get('/login', async (req, res) => {
-  if (req.session.login) {
-    res.redirect('/')
-  } else {
-    res.render('login')
-  }
-})
-
-sessionRouter.get('/register', async (req, res) => {
-  if (req.session.user) {
-    res.redirect('/')
-  } else {
-    res.render('users')
-  }
-})
-
-// Route to create a user
-sessionRouter.post('/register', passport.authenticate('register'), async (req, res) => {
-  try {
-    if (!req.user) {
-      res.status(400).send({ message: "Existing user" })
-    }
-
-    res.redirect('/login')
-  }
-
-  catch (error) {
-    res.status(500).send({ message: `Error creating user ${error}` })
-  }
-})
 
 // Route to create a session locally
 sessionRouter.post('/login', passport.authenticate('login'), async (req, res) => {
@@ -49,12 +20,31 @@ sessionRouter.post('/login', passport.authenticate('login'), async (req, res) =>
       age: req.user.age
     }
 
-    res.redirect('/products')
+    const token = generateToken(req.user)
+
+    res.cookie('jwtCookie', token, {
+      maxAge: 43200000
+    })
+    res.status(200).send({ payload: req.user })
   }
 
   catch (error) {
     res.status(500).send({ message: `Error logging ${error}` })
   }
+})
+
+sessionRouter.get('/testJWT', passport.authenticate('jwt', { session: true }), async (req, res) => {
+  res.status(200).send({ mensaje: req.user })
+  req.session.user = {
+    first_name: req.user.user.first_name,
+    last_name: req.user.user.last_name,
+    age: req.user.user.age,
+    email: req.user.user.email
+  }
+})
+
+sessionRouter.get('/current', passportError('jwt'), authorization('user'), (req, res) => {
+  res.send(req.user)
 })
 
 // Route to authenticate with GitHub
@@ -67,9 +57,6 @@ sessionRouter.get('/githubSession', passport.authenticate('github'), async (req,
   req.session.user = req.user
   res.status(200).send({ message: "Created Session" })
 })
-
-// Route to test JWT
-sessionRouter
 
 // Route to destroy a session
 sessionRouter.get('/logout', (req, res) => {

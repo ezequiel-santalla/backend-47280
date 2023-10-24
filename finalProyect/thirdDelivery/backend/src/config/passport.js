@@ -8,14 +8,12 @@ import UserModel from '../models/users.model.js'
 const LocalStrategy = local.Strategy
 const JWTStrategy = jwt.Strategy
 
-const ExtractJWT = jwt.ExtractJwt // Helpers
+const ExtractJWT = jwt.ExtractJwt
 
 const initializePassport = () => {
   const cookieExtractor = req => {
-    console.log(req.cookies)
 
     const token = req.cookies ? req.cookies.jwtCookie : {}
-    console.log(token)
 
     return token
   }
@@ -41,7 +39,7 @@ const initializePassport = () => {
         const user = await UserModel.findOne({ email: username })
 
         if (user) {
-          return done(null, false)
+          return done(null, true)
         }
 
         const hashPassword = createHash(password)

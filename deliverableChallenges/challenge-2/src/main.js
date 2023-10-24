@@ -15,11 +15,7 @@ import ProductModel from './models/products.model.js'
 import MessageModel from './models/messages.model.js'
 import UserModel from './models/users.model.js'
 
-import productRouter from './routes/products.routes.js'
-import cartRouter from './routes/carts.routes.js'
-import userRouter from './routes/users.routes.js'
-import sessionRouter from './routes/sessions.routes.js'
-import messageRouter from './routes/messages.routes.js'
+import router from './routes/index.routes.js'
 
 import initializePassport from './config/passport.js'
 
@@ -114,13 +110,9 @@ app.use('/static/chat', express.static(path.join(__dirname, '/public')))
 app.use('/static/users', express.static(path.join(__dirname, '/public')))
 
 // API Routes
-app.use('/api/products', productRouter)
-app.use('/api/carts', cartRouter)
-app.use('/api/messages', messageRouter)
-app.use('/api/users', userRouter)
-app.use('/', sessionRouter)
+app.use('/', router)
 
-
+// Views
 app.get('/static/realtimeproducts', (req, res) => {
   res.render("realTimeProducts", {
     pathCSS: "realTimeProducts",

@@ -12,10 +12,8 @@ const ExtractJWT = jwt.ExtractJwt // Helpers
 
 const initializePassport = () => {
   const cookieExtractor = req => {
-    console.log(req.cookies)
 
     const token = req.cookies ? req.cookies.jwtCookie : {}
-    console.log(token)
 
     return token
   }
@@ -41,7 +39,7 @@ const initializePassport = () => {
         const user = await UserModel.findOne({ email: username })
 
         if (user) {
-          return done(null, false)
+          return done(null, true)
         }
 
         const hashPassword = createHash(password)
