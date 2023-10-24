@@ -1,5 +1,5 @@
 import 'dotenv/config'
-
+import cors from 'cors'
 import express from 'express'
 import mongoose from 'mongoose'
 import cookieParser from 'cookie-parser'
@@ -16,6 +16,17 @@ import config from './config/config.js'
 const app = express()
 const PORT = 8080
 
+const whiteList = ['http://localhost:5173/login']
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (whiteList.indexOf(origin) != -1 || !origin) {
+      callback(null, true)
+    } else {
+      callback(new Error("Access denied"))
+    }
+  }
+}
+
 // Server
 app.listen(PORT, () => {
   console.log(`Server on PORT: ${PORT}
@@ -31,6 +42,7 @@ mongoose.connect(config.mongoUrl)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser(config.jwtSecret))
+app.use(cors(corsOptions))
 app.use(session({
   store: MongoStore.create({
     mongoUrl: config.mongoUrl,
