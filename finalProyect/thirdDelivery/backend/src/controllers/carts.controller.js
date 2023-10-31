@@ -48,8 +48,8 @@ const purchaseCart = async (req, res) => {
 					purchaseItems.push(product.title);
 				}
 			});
-			console.log(purchaseItems);
 			await cartModel.findByIdAndUpdate(cid, { products: [] });
+
 			res.redirect(
 				`http://localhost:8080/api/tickets/create?amount=${amount}&email=${email}`
 			);

@@ -4,6 +4,6 @@ import ticketsController from '../controllers/tickets.controller.js';
 const routerTicket = Router();
 
 routerTicket.get('/', ticketsController.getTickets);
-routerTicket.get('/create', ticketsController.createTicket);
+routerTicket.post('/', ticketsController.createTicket);
 
 export default routerTicket;
