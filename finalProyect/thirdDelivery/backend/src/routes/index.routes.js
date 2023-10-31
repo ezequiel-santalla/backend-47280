@@ -1,15 +1,16 @@
-import { Router } from 'express'
+import { Router } from 'express';
+import routerCart from './carts.routes.js';
+import routerProd from './products.routes.js';
+import routerUser from './users.routes.js';
+import routerSession from './sessions.routes.js';
+import routerTicket from './tickets.routes.js';
 
-import productRouter from './products.routes.js'
-import cartRouter from './carts.routes.js'
-import userRouter from './users.routes.js'
-import sessionRouter from './sessions.routes.js'
+const router = Router();
 
-const router = Router()
+router.use('/api/products', routerProd);
+router.use('/api/carts', routerCart);
+router.use('/api/users', routerUser);
+router.use('/api/sessions', routerSession);
+router.use('/api/tickets', routerTicket);
 
-router.use('/api/products', productRouter)
-router.use('/api/carts', cartRouter)
-router.use('/api/users', userRouter)
-router.use('/api/sessions', sessionRouter)
-
-export default router
+export default router;

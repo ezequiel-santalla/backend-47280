@@ -1,24 +1,22 @@
-import { Router } from 'express'
-import { passportError, authorization } from '../utils/messageErrors.js'
-import {
-  loginUser,
-  testJWT,
-  getCurrentSession,
-  authenticateWithGitHub,
-  createGitHubSession,
-  logoutUser,
-} from '../controllers/sessions.controller.js'
+import { Router } from 'express';
+import passport from 'passport';
+import { passportError } from '../utils/messageErrors.js';
+import sessionController from '../controllers/sessions.controller.js';
 
-import passport from 'passport'
+const routerSession = Router();
 
+routerSession.post('/login', passport.authenticate('login'), sessionController.postSession);
+routerSession.get('/current', passportError('jwt'), sessionController.getCurrentSession);
+routerSession.get(
+	'/github',
+	passport.authenticate('github', { scope: ['user: email'] }),
+	sessionController.getGithubCreateUser
+);
+routerSession.get(
+	'/githubSession',
+	passport.authenticate('github'),
+	sessionController.getGithubSession
+);
+routerSession.get('/logout', sessionController.getLogout);
 
-const sessionRouter = Router()
-
-sessionRouter.post('/login', passport.authenticate('login'), loginUser)
-sessionRouter.get('/testJWT', passport.authenticate('jwt', { session: true }), testJWT)
-sessionRouter.get('/current', passportError('jwt'), authorization('user'), getCurrentSession)
-sessionRouter.get('/github', authenticateWithGitHub)
-sessionRouter.get('/githubSession', createGitHubSession)
-sessionRouter.get('/logout', logoutUser)
-
-export default sessionRouter
+export default routerSession;

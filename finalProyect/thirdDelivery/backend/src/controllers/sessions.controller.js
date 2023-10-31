@@ -1,58 +1,49 @@
-import passport from 'passport'
-import { generateToken } from '../utils/jwt.js'
+import { generateToken } from '../utils/jwt.js';
 
-export const loginUser = async (req, res) => {
-  try {
-    if (!req.user) {
-      return res.status(401).send({ message: "Invalidate password" })
-    }
+const postSession = async (req, res) => {
+	try {
+		if (!req.user) {
+			return res.status(401).send({ mensaje: 'Invalidate user' });
+		}
 
-    req.session.user = {
-      first_name: req.user.first_name,
-      last_name: req.user.last_name,
-      email: req.user.email,
-      age: req.user.age
-    }
+		const token = generateToken(req.user);
+		res.cookie('jwtCookie', token, {
+			maxAge: 43200000,
+		});
 
-    const token = generateToken(req.user)
+		return res.redirect('../../static/products');
+	} catch (error) {
+		res.status(500).send({ mensaje: `Error al iniciar sesión ${error}` });
+	}
+};
 
-    res.cookie('jwtCookie', token, {
-      maxAge: 43200000
-    })
-    res.status(200).send({ payload: req.user })
-  } catch (error) {
-    res.status(500).send({ message: `Error logging ${error}` })
-  }
-}
+const getCurrentSession = async (req, res) => {
+	res.status(200).send(req.user);
+};
 
-export const testJWT = async (req, res) => {
-  res.status(200).send({ mensaje: req.user });
-  req.session.user = {
-    first_name: req.user.user.first_name,
-    last_name: req.user.user.last_name,
-    age: req.user.user.age,
-    email: req.user.user.email
-  }
-}
+const getGithubCreateUser = async (req, res) => {
+	return res.status(200).send({ mensaje: 'Usuario creado' });
+};
 
-export const getCurrentSession = (req, res) => {
-  res.send(req.user)
-}
+const getGithubSession = async (req, res) => {
+	req.session.user = req.user;
+	res.status(200).send({ mensaje: 'Sesión creada' });
+};
 
-export const authenticateWithGitHub = passport.authenticate('github', { scope: ['user:email'] })
+const getLogout = (req, res) => {
+	if (req.session) {
+		req.session.destroy();
+	}
+	res.clearCookie('jwtCookie');
+	res.status(200).send({ resultado: 'Login eliminado', message: 'Logout' });
+};
 
-export const createGitHubSession = passport.authenticate('github')
+const sessionController = {
+	postSession,
+	getCurrentSession,
+	getGithubCreateUser,
+	getGithubSession,
+	getLogout,
+};
 
-export const logoutUser = (req, res) => {
-  if (req.session.user) {
-    req.session.destroy(error => {
-      if (error) {
-        res.status(500).send({ error: 'Error logging out' })
-      } else {
-        res.redirect('/')
-      }
-    })
-  } else {
-    res.status(401).send({ error: 'There is no active session' })
-  }
-}
+export default sessionController;

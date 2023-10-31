@@ -1,31 +1,19 @@
-import 'dotenv/config'
-import cors from 'cors'
-import express from 'express'
-import mongoose from 'mongoose'
-import cookieParser from 'cookie-parser'
-import session from 'express-session'
-import MongoStore from 'connect-mongo'
-import passport from 'passport'
-import { __dirname } from './path.js'
+import 'dotenv/config';
 
-import router from './routes/index.routes.js'
+import express from 'express';
+import session from 'express-session';
+import { __dirname } from './path.js';
+import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
+import MongoStore from 'connect-mongo';
+import passport from 'passport';
+import initializePassport from './config/passport.js';
+import config from './config/config.js';
 
-import initializePassport from './config/passport.js'
-import config from './config/config.js'
+import router from './routes/index.routes.js';
 
-const app = express()
-const PORT = 8080
-
-const whiteList = ['http://localhost:5173/login']
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (whiteList.indexOf(origin) != -1 || !origin) {
-      callback(null, true)
-    } else {
-      callback(new Error("Access denied"))
-    }
-  }
-}
+const app = express();
+const PORT = 8080;
 
 // Server
 app.listen(PORT, () => {
@@ -42,7 +30,6 @@ mongoose.connect(config.mongoUrl)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser(config.jwtSecret))
-app.use(cors(corsOptions))
 app.use(session({
   store: MongoStore.create({
     mongoUrl: config.mongoUrl,
@@ -59,4 +46,3 @@ app.use(passport.session())
 
 // API Routes
 app.use('/', router)
-

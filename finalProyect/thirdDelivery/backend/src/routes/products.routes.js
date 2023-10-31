@@ -1,18 +1,23 @@
-import { Router } from 'express'
-import {
-  getProducts,
-  getProduct,
-  postProduct,
-  putProduct,
-  deleteProduct
-} from '../controllers/products.controller.js'
+import { Router } from 'express';
+import productsController from '../controllers/products.controller.js';
+import { authorization, passportError } from '../utils/messageErrors.js';
 
-const productRouter = Router()
+const routerProd = Router();
 
-productRouter.get('/', getProducts)
-productRouter.get('/', getProduct)
-productRouter.post('/', postProduct)
-productRouter.put('/', putProduct)
-productRouter.delete('/', deleteProduct)
+routerProd.get('/', productsController.getProducts);
+routerProd.get('/:pid', productsController.getProduct);
+routerProd.post('/', passportError('jwt'), authorization('admin'), productsController.postProduct);
+routerProd.put(
+	'/:pid',
+	passportError('jwt'),
+	authorization('admin'),
+	productsController.putProduct
+);
+routerProd.delete(
+	'/:pid',
+	passportError('jwt'),
+	authorization('admin'),
+	productsController.deleteProduct
+);
 
-export default productRouter
+export default routerProd;
