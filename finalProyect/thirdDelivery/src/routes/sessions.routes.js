@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import { passportError, authorization } from '../utils/messageErrors.js'
 import {
   loginUser,
   testJWT,
@@ -7,6 +8,9 @@ import {
   createGitHubSession,
   logoutUser,
 } from '../controllers/sessions.controller.js'
+
+import passport from 'passport'
+
 
 const sessionRouter = Router()
 
