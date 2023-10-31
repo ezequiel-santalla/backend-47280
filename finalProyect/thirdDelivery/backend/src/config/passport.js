@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import local from 'passport-local';
 import passport from 'passport';
+import config from '../config/config.js'
 import GithubStrategy from 'passport-github2';
 import jwt, { ExtractJwt } from 'passport-jwt';
 import { createHash, validatePassword } from '../utils/bcrypt.js';
@@ -83,9 +84,9 @@ const githubRegister = () => {
 		'github',
 		new GithubStrategy(
 			{
-				clientID: process.env.CLIENT_ID,
-				clientSecret: process.env.CLIENT_SECRET,
-				callbackURL: process.env.CALLBACK_URL,
+				clientID: config.clientId,
+				clientSecret: config.clientSecret,
+				callbackURL: config.callbackUrl,
 			},
 			async (accessToken, refreshToken, profile, done) => {
 				try {
@@ -121,7 +122,7 @@ const jwtLogin = () => {
 		new JWTStrategy(
 			{
 				jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
-				secretOrKey: process.env.JWT_SECRET,
+				secretOrKey: config.jwtSecret,
 			},
 			async (jwt_payload, done) => {
 				try {

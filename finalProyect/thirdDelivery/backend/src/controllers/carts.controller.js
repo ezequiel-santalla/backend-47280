@@ -6,7 +6,7 @@ const getCarts = async (req, res) => {
 	const { limit } = req.query;
 
 	try {
-		const carts = await cartModel.find().limit(limit);
+		const carts = await cartModel.find().limit(limit).populate('products');
 
 		res.status(200).send({ resultado: 'OK', message: carts });
 	}
@@ -51,7 +51,7 @@ const purchaseCart = async (req, res) => {
 			await cartModel.findByIdAndUpdate(cid, { products: [] });
 
 			res.redirect(
-				`http://localhost:8080/api/tickets/?amount=${amount}&email=${email}`
+				`http://localhost:8080/api/tickets/create/?amount=${amount}&email=${email}`
 			);
 		} else {
 			res.status(404).send({ resultado: 'Not Found', message: cart });
@@ -83,7 +83,6 @@ const putProductToCart = async (req, res) => {
 		}
 
 		if (product.stock === 0) {
-			console.log(product.stock);
 			res.status(400).send({ error: `No hay stock` });
 		}
 
