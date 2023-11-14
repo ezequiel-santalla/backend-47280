@@ -1,124 +1,107 @@
-import productModel from '../models/products.models.js';
+import ProductModel from '../models/products.model.js'
 
-const getProducts = async (req, res) => {
-	const { limit, page, sort, category, team } = req.query;
+export const getProducts = async (req, res) => {
+  const { limit, page, filter, sort } = req.query
 
-	const pag = page ? page : 1;
-	const lim = limit ? limit : 10;
-	const ord = sort === 'asc' ? 1 : 0;
-	const filter = {};
+  const pag = page ? page : 1
+  const lim = limit ? limit : 10
+  const ord = sort == 'asc' ? 1 : -1
 
-	if (category) {
-		filter.category = category;
-	} else if (team) {
-		filter.team = team;
-	}
+  try {
+    const products = await ProductModel.paginate({ filter: filter }, { limit: lim, page: pag, sort: { price: ord } })
 
-	try {
-		const products = await productModel.paginate(filter, {
-			limit: lim,
-			page: pag,
-			sort: { price: ord },
-		});
+    if (products) {
+      return res.status(200).send(products)
+    }
 
-		if (products) {
-			return res.status(200).send(products);
-		}
+    else {
+      res.status(404).send({ error: "Products not found" })
+    }
 
-		res.status(404).send({ error: 'Productos no encontrados' });
-	} catch (error) {
-		res.status(500).send({ error: `Error en consultar productos ${error}` });
-	}
-};
+  } catch (error) {
+    res.status(500).send({ error: `Error consulting products ${error}` })
+  }
+}
 
-const getProduct = async (req, res) => {
-	const { pid } = req.params;
+export const getProduct = async (req, res) => {
+  const { pid } = req.params
 
-	try {
-		const product = await productModel.findById(pid);
+  try {
+    const product = await ProductModel.findById(pid)
 
-		if (product) {
-			return res.status(200).send(product);
-		}
+    if (product) {
+      return res.status(200).send(product)
+    }
 
-		res.status(404).send({ error: 'Producto no encontrado' });
-	} catch (error) {
-		res.status(500).send({ error: `Error en consultar producto ${error}` });
-	}
-};
+    else {
+      res.status(404).send({ error: "Product not found" })
+    }
 
-const postProduct = async (req, res) => {
-	const { title, description, category, team, price, stock, code } = req.body;
+  } catch (error) {
+    res.status(500).send({ error: `Error consulting product ${error}` })
+  }
+}
 
-	try {
-		const product = await productModel.create({
-			title,
-			description,
-			category,
-			team,
-			price,
-			stock,
-			code,
-		});
+export const postProduct = async (req, res) => {
+  const { title, description, category, price, stock, code } = req.body
 
-		if (product) {
-			return res.status(201).send(product);
-		}
-	} catch (error) {
-		if (error.code == 11000) {
-			res.status(400).send({ error: `Llave duplicada` });
-		}
+  try {
+    const product = await ProductModel.create({ title, description, category, price, stock, code })
 
-		return res.status(500).send({ error: `Error en consultar producto ${error}` });
-	}
-};
+    if (product) {
+      return res.status(201).send(product)
+    }
 
-const putProduct = async (req, res) => {
-	const { pid } = req.params;
-	const { title, description, code, price, stock, category } = req.body;
+    else {
+      res.status(404).send({ error: "Product not found" })
+    }
 
-	try {
-		const product = await productModel.findByIdAndUpdate(pid, {
-			title,
-			description,
-			code,
-			price,
-			stock,
-			category,
-		});
+  } catch (error) {
+    if (error.code == 11000) {
+      return res.status(400).send({ error: "Duplicated code" })
+    }
 
-		if (product) {
-			return res.status(200).send(product);
-		}
+    else {
+      return res.status(500).send({ error: `Error consulting product ${error}` })
+    }
+  }
+}
 
-		res.status(404).send({ error: 'Producto no encontrado' });
-	} catch (error) {
-		res.status(500).send({ error: `Error en actualizar producto ${error}` });
-	}
-};
+export const putProduct = async (req, res) => {
+  const { pid } = req.params
+  const { title, description, category, price, stock, code } = req.body
 
-const deleteProduct = async (req, res) => {
-	const { pid } = req.params;
+  try {
+    const product = await ProductModel.findByIdAndUpdate(pid, { title, description, category, price, stock, code })
 
-	try {
-		const product = await productModel.findByIdAndDelete(pid);
-		n;
-		if (product) {
-			return res.status(200).send(product);
-		}
+    if (product) {
+      return res.status(200).send(product)
+    }
 
-		res.status(404).send({ error: 'Producto no encontrado' });
-	} catch (error) {
-		res.status(500).send({ error: `Error en actualizar producto ${error}` });
-	}
-};
+    else {
+      res.status(404).send({ error: "Product not found" })
+    }
 
-const productsController = {
-	getProducts,
-	getProduct,
-	postProduct,
-	putProduct,
-	deleteProduct,
-};
+  } catch (error) {
+    res.status(500).send({ error: `Error updating product ${error}` })
+  }
+}
 
-export default productsController;
+export const deleteProduct = async (req, res) => {
+  const { pid } = req.params
+
+  try {
+    const product = await ProductModel.findByIdAndDelete(pid)
+
+    if (product) {
+      return res.status(200).send(product)
+    }
+
+    else {
+      res.status(404).send({ error: "Product not found" })
+    }
+
+  } catch (error) {
+    res.status(500).send({ error: `Error deleting product ${error}` })
+  }
+}

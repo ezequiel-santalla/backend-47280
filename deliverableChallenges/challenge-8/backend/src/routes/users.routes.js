@@ -1,10 +1,16 @@
-import { Router } from 'express';
-import passport from 'passport';
-import usersController from '../controllers/users.controller.js';
+import { Router } from 'express'
+import {
+  getUsers,
+  getUser,
+  postUser,
+  deleteUser
+} from '../controllers/users.controller.js'
 
-const routerUser = Router();
+const userRouter = Router()
 
-routerUser.post('/', passport.authenticate('register'), usersController.postUser);
-routerUser.get('/', usersController.getUser);
+userRouter.get('/', getUsers)
+userRouter.get('/', getUser)
+userRouter.post('/', postUser)
+userRouter.delete('/', deleteUser)
 
-export default routerUser;
+export default userRouter
